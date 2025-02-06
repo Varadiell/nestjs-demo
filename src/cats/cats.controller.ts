@@ -11,15 +11,25 @@ import {
   Redirect,
   Req,
 } from "@nestjs/common";
-
-export class CreateCatDto {
-  name: string;
-  age: number;
-  breed: string;
-}
+import { Cat } from "./interfaces/cat.interface";
+import { CatsService } from "./cats.service";
+import { CreateCatDto } from "./dto/create-cat.dto";
 
 @Controller("cats")
 export class CatsController {
+  // Dependency injection
+  constructor(private catsService: CatsService) {}
+
+  @Post()
+  async create_1(@Body() createCatDto: CreateCatDto) {
+    this.catsService.create(createCatDto);
+  }
+
+  @Get()
+  async findAll_1(): Promise<Cat[]> {
+    return this.catsService.findAll();
+  }
+
   // Routing
   @Get()
   findAll(): string {
