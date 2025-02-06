@@ -15,6 +15,7 @@ import {
   Redirect,
   Req,
   UseFilters,
+  UseGuards,
   UsePipes,
 } from "@nestjs/common";
 import { Cat } from "./interfaces/cat.interface";
@@ -24,6 +25,7 @@ import { HttpExceptionFilter } from "src/common/filter/http-exception.filter";
 import { ParseIntPipe } from "src/common/pipes/parse-int-pipe";
 import { ZodValidationPipe } from "src/common/pipes/zod-validation.pipe";
 import { createCatSchema } from "./dto/create-cat-zod.dto";
+import { RolesGuard } from "src/common/guards/roles.guard";
 
 @Controller("cats")
 export class CatsController {
@@ -189,3 +191,8 @@ export class AccountController {
     return account;
   }
 }
+
+// Guards
+@Controller("cats")
+@UseGuards(RolesGuard)
+export class CatsGuardController {}
