@@ -16,6 +16,7 @@ import {
   Req,
   UseFilters,
   UseGuards,
+  UseInterceptors,
   UsePipes,
 } from "@nestjs/common";
 import { Cat } from "./interfaces/cat.interface";
@@ -26,6 +27,7 @@ import { ParseIntPipe } from "src/common/pipes/parse-int-pipe";
 import { ZodValidationPipe } from "src/common/pipes/zod-validation.pipe";
 import { createCatSchema } from "./dto/create-cat-zod.dto";
 import { RolesGuard } from "src/common/guards/roles.guard";
+import { LoggingInterceptor } from "src/common/interceptors/logging.interceptor";
 
 @Controller("cats")
 export class CatsController {
@@ -196,3 +198,7 @@ export class AccountController {
 @Controller("cats")
 @UseGuards(RolesGuard)
 export class CatsGuardController {}
+
+// Interceptors
+@UseInterceptors(LoggingInterceptor)
+export class CatsInterceptorController {}
