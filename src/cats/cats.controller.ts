@@ -15,11 +15,15 @@ import {
   Redirect,
   Req,
   UseFilters,
+  UsePipes,
 } from "@nestjs/common";
 import { Cat } from "./interfaces/cat.interface";
 import { CatsService } from "./cats.service";
 import { CreateCatDto } from "./dto/create-cat.dto";
 import { HttpExceptionFilter } from "src/common/filter/http-exception.filter";
+import { ParseIntPipe } from "src/common/pipes/parse-int-pipe";
+import { ZodValidationPipe } from "src/common/pipes/zod-validation.pipe";
+import { createCatSchema } from "./dto/create-cat-zod.dto";
 
 @Controller("cats")
 export class CatsController {
@@ -152,6 +156,19 @@ export class CatsController {
   @UseFilters(new HttpExceptionFilter())
   async create_Filter(@Body() createCatDto: CreateCatDto) {
     throw new ForbiddenException();
+  }
+
+  // Pipes
+  @Get(":id")
+  async findOne_Pipe(@Param("id", new ParseIntPipe()) id) {
+    return this.catsService.findOne(id);
+  }
+
+  // Pipes - part 2 - zod
+  @Post()
+  @UsePipes(new ZodValidationPipe(createCatSchema))
+  async create_pipe_zod(@Body() createCatDto: CreateCatDto) {
+    this.catsService.create(createCatDto);
   }
 }
 
