@@ -1,19 +1,25 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Header,
   HostParam,
   HttpCode,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Query,
   Redirect,
   Req,
+  UseFilters,
 } from "@nestjs/common";
 import { Cat } from "./interfaces/cat.interface";
 import { CatsService } from "./cats.service";
 import { CreateCatDto } from "./dto/create-cat.dto";
+import { HttpExceptionFilter } from "src/common/filter/http-exception.filter";
 
 @Controller("cats")
 export class CatsController {
@@ -109,6 +115,43 @@ export class CatsController {
     @Query("breed") breed: string
   ) {
     return `This action returns all cats filtered by age: ${age} and breed: ${breed}`;
+  }
+
+  // Exception - part 1
+  @Get()
+  async findAll_Exception() {
+    throw new HttpException(
+      {
+        status: HttpStatus.FORBIDDEN,
+        error: "This is a custom message",
+      },
+      HttpStatus.FORBIDDEN,
+      {
+        cause: "the error",
+      }
+    );
+  }
+
+  // Exception - Custom - part 2
+  @Get()
+  async findAll_Exception2() {
+    throw new ForbiddenException();
+  }
+
+  // Exception - part 3
+  @Get()
+  async findAll_Exception3() {
+    throw new BadRequestException("Something bad happened", {
+      cause: new Error(),
+      description: "Some error description",
+    });
+  }
+
+  // Filter
+  @Post()
+  @UseFilters(new HttpExceptionFilter())
+  async create_Filter(@Body() createCatDto: CreateCatDto) {
+    throw new ForbiddenException();
   }
 }
 
